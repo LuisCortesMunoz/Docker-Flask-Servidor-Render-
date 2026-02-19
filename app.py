@@ -6,20 +6,16 @@ app = Flask(__name__)
 CORS(app)
 
 STATE = {
-    "on": False,
     "hex": "#ff0000",
     "r": 255,
     "g": 0,
     "b": 0,
-    "brightness": 120,
+    "leds": [False, False, False, False, False, False, False, False],  # 8 LEDs
     "updated_at": time.time()
 }
 
-def clamp(v, lo, hi):
-    return max(lo, min(hi, v))
-
 def hex_to_rgb(hex_str):
-    s = hex_str.strip().lstrip("#")
+    s = str(hex_str).strip().lstrip("#")
     if len(s) != 6:
         return 255, 0, 0
     r = int(s[0:2], 16)
@@ -32,38 +28,34 @@ def home():
     return jsonify({
         "ok": True,
         "message": "Flask LED API running on Render",
-        "routes": ["/api/state (GET)", "/api/set (POST)", "/api/off (POST)"]
+        "routes": ["/api/state_leds (GET)", "/api/set_leds (POST)"]
     })
 
-@app.get("/api/state")
-def get_state():
+@app.get("/api/state_leds")
+def get_state_leds():
     return jsonify({"ok": True, "state": STATE})
 
-@app.post("/api/set")
-def set_state():
+@app.post("/api/set_leds")
+def set_leds():
     data = request.get_json(silent=True) or {}
 
-    on = bool(data.get("on", True))
     hex_color = str(data.get("hex", "#ff0000"))
-    brightness = int(data.get("brightness", STATE["brightness"]))
-    brightness = clamp(brightness, 0, 255)
+    leds = data.get("leds", STATE["leds"])
 
+    # Validate leds array
+    if (not isinstance(leds, list)) or (len(leds) != 8):
+        return jsonify({"ok": False, "error": "leds must be a list of 8 booleans"}), 400
+
+    leds_bool = [bool(x) for x in leds]
     r, g, b = hex_to_rgb(hex_color)
 
-    STATE["on"] = on
     STATE["hex"] = hex_color
     STATE["r"] = r
     STATE["g"] = g
     STATE["b"] = b
-    STATE["brightness"] = brightness
+    STATE["leds"] = leds_bool
     STATE["updated_at"] = time.time()
 
-    return jsonify({"ok": True, "state": STATE})
-
-@app.post("/api/off")
-def set_off():
-    STATE["on"] = False
-    STATE["updated_at"] = time.time()
     return jsonify({"ok": True, "state": STATE})
 
 if __name__ == "__main__":
