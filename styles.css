@@ -1,0 +1,54 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f3f4f6;
+  margin: 0;
+  padding: 30px;
+}
+
+.card {
+  max-width: 520px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+h1 {
+  margin: 0 0 16px 0;
+  font-size: 22px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+button {
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+  background: #e5e7eb;
+}
+
+button.primary {
+  background: #2563eb;
+  color: white;
+}
+
+button.danger {
+  background: #ef4444;
+  color: white;
+}
+
+pre {
+  background: #0b1020;
+  color: #d1d5db;
+  padding: 12px;
+  border-radius: 12px;
+  overflow: auto;
+  min-height: 90px;
+}
